@@ -47,8 +47,9 @@ routeparser : Url -> Route
 routeparser url =
     UP.parse
         (UP.oneOf
-            [ UP.map ItemRoute (s "item" </> UP.string)
-            , UP.map TopRoute UP.top
+            -- elm reactorで動かしたかった
+            [ UP.map ItemRoute (s "Main.elm" </> s "item" </> UP.string)
+            , UP.map TopRoute (s "Main.elm")
             ]
         )
         url
@@ -57,12 +58,12 @@ routeparser url =
 
 itemUrl : String -> String
 itemUrl id =
-    UB.relative [ "item", id ] []
+    UB.absolute [ "Main.elm", "item", id ] []
 
 
 topUrl : String
 topUrl =
-    UB.relative [] []
+    UB.absolute [ "Main.elm" ] []
 
 
 init : () -> Url -> Key -> ( Model, Cmd Msg )
@@ -106,4 +107,21 @@ view model =
 
 router : Model -> Element msg
 router model =
-    none
+    case model.route of
+        TopRoute ->
+            column []
+                [ text "top"
+                , link []
+                    { url = itemUrl "Ham"
+                    , label = text <| "item link Ham"
+                    }
+                ]
+
+        ItemRoute id ->
+            column []
+                [ text <| "item : " ++ id
+                , link []
+                    { url = topUrl
+                    , label = text <| "return to Top"
+                    }
+                ]
