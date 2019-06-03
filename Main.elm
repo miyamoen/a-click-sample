@@ -202,7 +202,7 @@ itemCard gloabalAngle { id, name, description, isRotation, angle } =
                     [ Border.rounded 10
                     , paddingXY 16 8
                     , Background.color <| rgb255 255 185 116
-                    , preventUrlRequest <| ToggleRotateItem id
+                    , onCustomClick <| ToggleRotateItem id
                     , pointer
                     , alignBottom
                     , alignRight
@@ -262,12 +262,16 @@ itemPage id model =
         ]
 
 
-preventUrlRequest : msg -> Attribute msg
-preventUrlRequest msg =
+onCustomClick : msg -> Attribute msg
+onCustomClick msg =
     Html.Events.custom "click"
         (JD.succeed
             { message = msg
+
+            -- 親のaタグのclickイベントを発火させないようにする
             , stopPropagation = True
+
+            -- ブラウザのaタグでの遷移の挙動を止める
             , preventDefault = True
             }
         )
